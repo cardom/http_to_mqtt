@@ -9,7 +9,7 @@ var settings = {
         topic: process.env.KEEP_ALIVE_TOPIC || 'keep_alive',
         message: process.env.KEEP_ALIVE_MESSAGE || 'keep_alive'
     },
-    debug: process.env.DEBUG_MODE || false,
+    debug: process.env.DEBUG_MODE || true,
     auth_key: process.env.AUTH_KEY || '',
     http_port: process.env.PORT || 5000
 }
@@ -93,6 +93,15 @@ function checkTopicQueryParameter(req, res, next) {
     next();
 }
 
+function enforceRequestBodyObject(req, res, next) {
+
+    if (typeof req.body === 'undefined') {
+        req.body = {};
+    }
+
+    next();
+}
+
 function ensureTopicSpecified(req, res, next) {
     if (!req.body.topic) {
         res.status(500).send('Topic not specified');
@@ -107,13 +116,15 @@ app.get('/keep_alive/', logRequest, function (req, res) {
     res.sendStatus(200);
 });
 
-app.get('/post/', logRequest, function (req, res) {
+app.post('/post/', logRequest, authorizeUser, checkSingleFileUpload, checkMessagePathQueryParameter, checkTopicQueryParameter, ensureTopicSpecified, function (req, res) {
     mqttClient.publish(req.body['topic'], req.body['message']);
+    console.log('POST Request Received');
     res.sendStatus(200);
 });
 
-app.post('/post/', logRequest, authorizeUser, checkSingleFileUpload, checkMessagePathQueryParameter, checkTopicQueryParameter, ensureTopicSpecified, function (req, res) {
+app.get('/post/', logRequest, authorizeUser, enforceRequestBodyObject, checkSingleFileUpload, checkMessagePathQueryParameter, checkTopicQueryParameter, ensureTopicSpecified, function (req, res) {
     mqttClient.publish(req.body['topic'], req.body['message']);
+    console.log('GET Request Received');
     res.sendStatus(200);
 });
 
