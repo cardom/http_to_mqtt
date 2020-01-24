@@ -63,7 +63,15 @@ automation:
 You can run this on basically anything that runs NodeJS.
 
 1.  Clone the repository
-2.  Run index.js
+2.  Install MQTT node:
+    npm install mqtt --save
+3.  Install Express node:
+    npm install express --save
+4.  Install body-parser node:
+    npm install body-parser --save
+5.  Install multer node:
+    npm install multer --save
+6.  Run index.js
 
 #### Examples
 
