@@ -75,93 +75,9 @@ You can run this on basically anything that runs NodeJS.
 
 #### Examples
 
+##### Publish to a topic from Shelly Devices
+Use Action URL like the following:
+http://<IP-of-http_to_mqtt>:5000/post?topic=TOPIC/SUBTOPIC&path=MESSAGE
 
-##### Publish to a topic
-Clone the repository and run `http_to_mqtt`.
-
-By default the `http_to_mqtt` will listen on port 5000 and connect to the localhost MQTT Broker.  
-The MQTT Broker (and other settings) can be specified by environment variables.
-
-```bash
-git clone https://github.com/petkov/http_to_mqtt.git
-cd http_to_mqtt
-node index.js
-```
-
-output:
-```
-Node app is running on port 5000
-```
-
-Publish a message to the topic 'MyTopic'
-```bash
-curl -H "Content-Type: application/json" "http://localhost:5000/post"  -d '{"topic" : "MyTopic", "message" : "Hello World" }'
-```
-
-output:
-```
-OK
-```
-
-#### Subscribe to a topic
-
-You can subscribe to a topic.  `http_to_mqtt` will keep the connection open and wait for a messages from the MQTT Broker and will send them to the response each time a message is handled.
-
-```bash
-git clone https://github.com/petkov/http_to_mqtt.git
-cd http_to_mqtt
-node index.js
-```
-
-output:
-```
-Node app is running on port 5000
-```
-
-Publish a message to the topic 'MyTopic'.  Use `-ivs --raw` to see messages come in as they are received.
-```bash
-curl -ivs --raw localhost:5000/subscribe?topic=MyTopic
-```
-
-output:
-```
-*   Trying ::1...
-* TCP_NODELAY set
-* Connected to localhost (::1) port 5000 (#0)
-> GET /subscribe?topic=MyTopic HTTP/1.1
-> Host: localhost:5000
-> User-Agent: curl/7.54.1
-> Accept: */*
->
-```
-
-Whenever a message is published to the topic MyTopic curl will output the message.
-
-Use mosquitto_pub to publish a message:
-```bash
-mosquitto_pub -t 'MyTopic' -m 'I sent this message using Mosquitto'
-```
-
-curl output:
-```
-<
-23
-I sent this message using Mosquitto
-```
-
-## Specific Use Cases
-### Plex
-Plex has the ability to specify web hooks.
-
-We must use some query parameters to tell http_to_mqtt to handle certain things specific to our use case.
- - topic=/plex/playback : Since Plex does not know which MQTT topic to post to, we must specify that via the topic query parameter.  This can be anything.
- - single=thumb : Plex send the user's thumbnail as the 'thumb' file.  Setting the single query parameter tells http_to_mqtt to handle single file uploads.
- - path=payload : The information we care about is specified by the payload property of the JSON uploaded.  Tell http_to_mqtt that that is the message that should be published.
- 
-```
-http://localhost:5000/post?topic=/plex/playback&single=thumb&path=payload
-```
-
-## Thanks
-
-Special thanks to Ben from [BRUH Automation](https://www.youtube.com/channel/UCLecVrux63S6aYiErxdiy4w/featured) for awesome tutorials which inspired me to do this project.
+##### Other Use Cases
+For other use cases, see original project from 
