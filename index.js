@@ -79,7 +79,7 @@ function checkSingleFileUpload(req, res, next) {
 
 function checkMessagePathQueryParameter(req, res, next) {
     if (req.query.path) {
-        req.body.message = req.body[req.query.path];
+        req.body.message = req.query.path;
     }
     next();
 }
@@ -104,6 +104,11 @@ function ensureTopicSpecified(req, res, next) {
 
 app.get('/keep_alive/', logRequest, function (req, res) {
     mqttClient.publish(settings.keepalive.topic, settings.keepalive.message);
+    res.sendStatus(200);
+});
+
+app.get('/post/', logRequest, function (req, res) {
+    mqttClient.publish(req.body['topic'], req.body['message']);
     res.sendStatus(200);
 });
 
